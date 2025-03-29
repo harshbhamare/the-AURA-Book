@@ -6,14 +6,14 @@ const jwt = require("jsonwebtoken");
 
 router.post("/create-space", async function (req, res) {
     try {
-        const token = req.cookies.token;  // Get token from cookies
+        const token = req.cookies.token;  
         if (!token) {
             return res.status(401).json({ error: "Unauthorized: No token provided" });
         }
 
         let decoded;
         try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET || "bhamare");  // Verify JWT token
+            decoded = jwt.verify(token, process.env.JWT_SECRET || "bhamare");  
         } catch (error) {
             return res.status(403).json({ error: "Invalid Token" });
         }
@@ -28,23 +28,20 @@ router.post("/create-space", async function (req, res) {
             return res.status(400).json({ error: "Space name already exists" });
         }
 
-        // Generate spaceCode separately
         const spaceCode = Math.random().toString(36).substr(2, 8);
 
-        // Create new space
         const newSpace = new spaceModel({
             spaceName,
             spaceCode,
-            admin: decoded.userId,  // Assign logged-in user as admin
-            members: [decoded.userId],  // Add creator as first member
+            admin: decoded.userId,  
+            members: [decoded.userId],  
         });
 
         await newSpace.save();
 
-        // Update user's `mySpaces` field
         await userModel.findByIdAndUpdate(
             decoded.userId,
-            { $push: { mySpaces: newSpace._id } },  // Push the space ID into user's `mySpaces`
+            { $push: { mySpaces: newSpace._id } },  
             { new: true }
         );
 

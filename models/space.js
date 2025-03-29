@@ -5,6 +5,7 @@ const spaceSchema = new mongoose.Schema({
     spaceCode: { type: String, required: true },
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],  
+    pendingRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "user"}],
 });
 
 module.exports = mongoose.model("space", spaceSchema);

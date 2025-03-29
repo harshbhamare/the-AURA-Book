@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Aura</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- HEADER -->
+    <header class="flex justify-between items-center p-4 bg-white shadow-md">
+        <h1 class="text-2xl font-bold text-indigo-600">Aura Admin Dashboard</h1>
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-700 hover:text-indigo-500">
+                🔥 <span class="font-semibold">Aura Points:</span> <span id="auraPoints">0</span>
+            </button>
+            <button class="text-gray-700 hover:text-indigo-500">💬</button>
+            <button class="text-gray-700 hover:text-indigo-500">💰 <span class="font-bold">₹<span id="walletAmount">500</span></span></button>
+            <button class="text-gray-700 hover:text-indigo-500">👤</button>
+        </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <div class="container mx-auto p-6">
+
+        <!-- PENDING REQUESTS -->
+<div class="bg-white p-4 rounded-lg shadow-md mb-6">
+    <h2 class="text-xl font-bold mb-4">Pending Join Requests</h2>
+    <table class="w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Name</th>
+                <th class="border p-2">Email</th>
+                <th class="border p-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (pendingRequests.length > 0) { %>
+                <% pendingRequests.forEach(request => { %>
+                    <tr>
+                        <td class="border p-2"><%= request.username %></td>
+                        <td class="border p-2"><%= request.email %></td>
+                        <td class="border p-2">
+                            <form action="/accept-request/<%= request._id %>/<%= space._id %>" method="POST" class="inline">
+                                <button type="submit" class="bg-green-500 text-white px-2 py-1 rounded">Accept</button>
+                            </form>
+                            
+                            <form action="/deny-request/<%= request._id %>/<%= space._id %>" method="POST" class="inline">
+                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr>
+                    <td colspan="3" class="border p-2 text-center">No pending requests</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+
+        <!-- TOP 3 PERFORMERS CHART -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-bold mb-4">Top 3 Performers</h2>
+            <canvas id="topPerformersChart"></canvas>
+        </div>
+
+        <!-- AURA POINTS TABLE -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold mb-4">Aura Points Leaderboard</h2>
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border p-2">Rank</th>
+                        <th class="border p-2">Name</th>
+                        <th class="border p-2">Nickname</th>
+                        <th class="border p-2">Aura Points</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardTable">
+                    <!-- Data will be inserted dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- CHART SCRIPT & DATA LOADING -->
+    <script>
+        // Sample Data
+        const pendingRequests = [
+            { _id: "1", username: "John Doe", nickname: "Johnny", contactNumber: "9876543210" },
+            { _id: "2", username: "Jane Smith", nickname: "Janey", contactNumber: "9123456789" }
+        ];
+
+        const topPerformers = [
+            { username: "Alice", auraPoints: 150 },
+            { username: "Bob", auraPoints: 120 },
+            { username: "Charlie", auraPoints: 100 }
+        ];
+
+        const leaderboard = [
+            { username: "Alice", nickname: "Ali", auraPoints: 150 },
+            { username: "Bob", nickname: "Bobby", auraPoints: 120 },
+            { username: "Charlie", nickname: "Chuck", auraPoints: 100 },
+            { username: "David", nickname: "Dave", auraPoints: 90 },
+            { username: "Eve", nickname: "Evie", auraPoints: 80 }
+        ];
+
+        // Populate Pending Requests
+        const pendingRequestsTable = document.getElementById("pendingRequestsTable");
+        pendingRequests.forEach(request => {
+            const row = `
+                <tr class="text-center bg-gray-50">
+                    <td class="border p-2">${request.username}</td>
+                    <td class="border p-2">${request.nickname}</td>
+                    <td class="border p-2">${request.contactNumber}</td>
+                    <td class="border p-2">
+                        <button class="bg-green-500 text-white px-3 py-1 rounded approve-btn" data-id="${request._id}">✅ Approve</button>
+                        <button class="bg-red-500 text-white px-3 py-1 rounded deny-btn" data-id="${request._id}">❌ Deny</button>
+                    </td>
+                </tr>
+            `;
+            pendingRequestsTable.innerHTML += row;
+        });
+
+        // Populate Leaderboard Table
+        const leaderboardTable = document.getElementById("leaderboardTable");
+        leaderboard.forEach((member, index) => {
+            const row = `
+                <tr class="text-center bg-gray-50">
+                    <td class="border p-2 font-bold">${index + 1}</td>
+                    <td class="border p-2">${member.username}</td>
+                    <td class="border p-2">${member.nickname}</td>
+                    <td class="border p-2 font-semibold text-indigo-600">${member.auraPoints}</td>
+                </tr>
+            `;
+            leaderboardTable.innerHTML += row;
+        });
+
+        // Chart for Top Performers
+        const ctx = document.getElementById('topPerformersChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: topPerformers.map(user => user.username),
+                datasets: [{
+                    label: 'Aura Points',
+                    data: topPerformers.map(user => user.auraPoints),
+                    backgroundColor: ['#4F46E5', '#6366F1', '#818CF8'],
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // APPROVE/DENY REQUESTS
+        document.querySelectorAll('.approve-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                alert(`Approved user with ID: ${this.dataset.id}`);
+                this.parentElement.parentElement.remove();
+            });
+        });
+
+        document.querySelectorAll('.deny-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                alert(`Denied user with ID: ${this.dataset.id}`);
+                this.parentElement.parentElement.remove();
+            });
+        });
+
+    </script>
+
+</body>
+</html>

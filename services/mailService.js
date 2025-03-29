@@ -9,7 +9,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Function to send OTP
 const sendOTP = async (email, otp) => {
   try {
     const mailOptions = {

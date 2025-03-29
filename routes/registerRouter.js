@@ -13,7 +13,6 @@ router.get("/register", (req, res) => {
     res.render("register");
 });
 
-// ✅ User Registration (Send OTP)
 router.post("/user", async (req, res) => {
     try {
         let { username, nickname, email, contactNumber } = req.body;
@@ -28,7 +27,7 @@ router.post("/user", async (req, res) => {
         }
 
         let otp = generateOTP();
-        let otpExpires = new Date(Date.now() + 5 * 60000); // OTP valid for 5 minutes
+        let otpExpires = new Date(Date.now() + 5 * 60000); 
 
         await userModel.create({
             username,
@@ -49,7 +48,6 @@ router.post("/user", async (req, res) => {
     }
 });
 
-// ✅ Verify OTP & Create Password
 router.post("/verify-otp", async (req, res) => {
     try {
         let { email, otp, password } = req.body;
@@ -72,17 +70,14 @@ router.post("/verify-otp", async (req, res) => {
             return res.status(400).json({ success: false, error: "Invalid OTP!" });
         }
 
-        // ✅ Hash Password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // ✅ Update User Data
         user.verified = true;
         user.password = hashedPassword;
         user.otp = null;
         user.otpExpires = null;
         await user.save();
 
-        // ✅ Generate JWT Token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "bhamare", { expiresIn: "7d" });
         res.cookie("token", token);
 

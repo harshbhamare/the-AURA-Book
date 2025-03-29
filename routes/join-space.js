@@ -6,7 +6,7 @@ const spaceModel = require("../models/space");
 
 router.post("/join-space", async function (req, res) {
     try {
-        const token = req.cookies.token; // Get token from cookies
+        const token = req.cookies.token; 
 
         if (!token) {
             return res.status(401).json({ error: "Unauthorized: No token provided" });
@@ -14,7 +14,7 @@ router.post("/join-space", async function (req, res) {
 
         let decoded;
         try {
-            decoded = jwt.verify(token, "bhamare"); // Verify JWT token
+            decoded = jwt.verify(token, "bhamare"); 
         } catch (error) {
             return res.status(403).json({ error: "Invalid Token" });
         }
@@ -31,18 +31,22 @@ router.post("/join-space", async function (req, res) {
             return res.status(404).json({ error: "Space not found" });
         }
 
-        // Check if user is already a member
+        space.members = Array.isArray(space.members) ? space.members : [];
+        space.pendingRequests = Array.isArray(space.pendingRequests) ? space.pendingRequests : [];
+
+        console.log("Decoded User ID:", decoded.userId);
+        console.log("Space Members:", space.members);
+        console.log("Pending Requests:", space.pendingRequests);
+
         if (space.members.includes(decoded.userId)) {
             return res.status(400).json({ error: "You are already a member of this space" });
         }
 
-        // Check if user has already requested to join
-        if (space.joinRequests.includes(decoded.userId)) {
+        if (space.pendingRequests.includes(decoded.userId)) {
             return res.status(400).json({ error: "Join request already sent" });
         }
 
-        // Add user's ID to joinRequests array
-        space.joinRequests.push(decoded.userId);
+        space.pendingRequests.push(decoded.userId);
         await space.save();
 
         res.status(201).json({

@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     verified: { type: Boolean, default: false },
     mySpaces: [{ type: mongoose.Schema.Types.ObjectId, ref: "space" }],  
     joinedSpaces: [{ type: mongoose.Schema.Types.ObjectId, ref: "space" }],  
+    auraPoints : { type : Number, default: 0}
 });
 
 module.exports = mongoose.model("user", userSchema);

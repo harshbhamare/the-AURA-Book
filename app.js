@@ -16,6 +16,7 @@ const loginRouter = require("./routes/loginRouter");
 const userDashboardRouter = require("./routes/userDashboard")
 const createSpaceRouter = require("./routes/create-space")
 const joinSpaceRouter = require("./routes/join-space")
+const spaceDashboardRouter = require("./routes/space-dashboard")
 
 app.use("/", homeRouter);
 app.use("/", registerRouter);
@@ -23,6 +24,7 @@ app.use("/", loginRouter);
 app.use("/", userDashboardRouter)
 app.use("/", createSpaceRouter)
 app.use("/", joinSpaceRouter)
+app.use("/", spaceDashboardRouter)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

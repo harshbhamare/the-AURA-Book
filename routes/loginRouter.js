@@ -3,7 +3,7 @@ const router = express.Router();
 const userModel = require("../models/user");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");  // ✅ Import bcryptjs
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 router.get("/login", function (req, res) {
@@ -13,7 +13,7 @@ router.get("/login", function (req, res) {
 router.post("/login-user", async function (req, res) {
     let { email, password } = req.body;
 
-    if (!email || !password) {  // ✅ Ensure fields are filled
+    if (!email || !password) {  
         return res.send("Please fill the complete registration form");
     }
 
@@ -22,7 +22,7 @@ router.post("/login-user", async function (req, res) {
         return res.redirect("/register");
     }
 
-    const match = await bcrypt.compare(password, existingUser.password);  // ✅ Fixed bcrypt usage
+    const match = await bcrypt.compare(password, existingUser.password);  
     if (!match) {
         return res.status(401).send("Invalid password");
     }
@@ -33,7 +33,7 @@ router.post("/login-user", async function (req, res) {
         { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, { httpOnly: true });  // ✅ Added httpOnly for security
+    res.cookie("token", token, { httpOnly: true });  
     res.redirect("/user-dashboard");
 });
 
