@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .menu button {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+        }
+
+        .menu button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .hidden { display: none; }
+
+        .input-form {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        input {
+            padding: 8px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .action-btn {
+            margin-top: 10px;
+            padding: 8px 15px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-btn { background-color: #28a745; }
+        .add-btn:hover { background-color: #218838; }
+
+        .join-btn { background-color: #ff9800; }
+        .join-btn:hover { background-color: #e68900; }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <button onclick="toggleForm('spaceForm')">Create Your Space</button>
+        <button onclick="toggleForm('joinForm')">Join a New Space</button>
+
+        <div id="spaceForm" class="input-form hidden">
+            <input type="text" id="spaceName" placeholder="Enter Space Name">
+            <button class="action-btn add-btn" onclick="submitForm('/create-space', 'spaceName', 'spaceForm')">Add</button>
+        </div>
+
+        <div id="joinForm" class="input-form hidden">
+            <input type="text" id="spaceCode" placeholder="Enter Space Code">
+            <button class="action-btn join-btn" onclick="submitForm('/join-space', 'spaceCode', 'joinForm')">Join</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleForm(formId) {
+            document.getElementById('spaceForm').classList.add('hidden');
+            document.getElementById('joinForm').classList.add('hidden');
+            document.getElementById(formId).classList.remove('hidden');
+        }
+
+        async function submitForm(url, inputId, formId) {
+            let inputValue = document.getElementById(inputId).value.trim();
+            if (!inputValue) return alert("Please enter a value!");
+
+            try {
+                let response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ [inputId]: inputValue })
+                });
+                
+                let result = await response.json();
+                alert(result.message);
+                document.getElementById(inputId).value = "";
+                document.getElementById(formId).classList.add("hidden");
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

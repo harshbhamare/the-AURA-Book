@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Here</title>
+</head>
+<body>
+    <form id="registerForm">
+        <h3>Register on our platform</h3>
+        <input type="text" name="username" placeholder="Enter Your Name" required>
+        <input type="text" name="nickname" placeholder="Enter Your Nickname" required>
+        <input type="text" name="contactNumber" placeholder="Enter Your Phone Number" required>
+        <input type="email" name="email" placeholder="Enter Your Email" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <form id="otpForm" style="display: none;">
+        <h3>Enter OTP</h3>
+        <input type="text" id="otp" placeholder="Enter OTP" required>
+        <input type="password" id="password" placeholder="Create Password" required>
+        <button type="submit">Verify OTP</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const registerForm = document.getElementById("registerForm");
+            const otpForm = document.getElementById("otpForm");
+            let userEmail = "";
+
+            registerForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const formData = {
+                    username: registerForm.username.value,
+                    nickname: registerForm.nickname.value,
+                    contactNumber: registerForm.contactNumber.value,
+                    email: registerForm.email.value,
+                };
+
+                userEmail = formData.email;
+
+                try {
+                    const response = await fetch("/user", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(formData),
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        alert("OTP sent to your email. Please verify.");
+                        registerForm.style.display = "none";
+                        otpForm.style.display = "block";
+                    } else {
+                        alert(result.error);
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            });
+
+            otpForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                
+                const otpValue = document.getElementById("otp").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch("/verify-otp", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: userEmail, otp: otpValue, password }),
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        alert("Registration successful! Redirecting...");
+                        localStorage.setItem("token", result.token);
+                        window.location.href = "/user-dashboard";
+                    } else {
+                        alert(result.error);
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
