@@ -10,15 +10,20 @@ const User = require("../models/user");
 router.get("/spaces/:id/space-dashboard", async function (req, res) {
     try {
         const space = await spaceModel.findById(req.params.id)
+            .populate("members", "username nickname auraPoints")
             .populate("pendingRequests", "username email");
 
         if (!space) return res.status(404).json({ error: "Space not found" });
 
+        space.members.sort((a, b) => (b.auraPoints || 0) - (a.auraPoints || 0));
+
         res.render("space-dashboard", { space, pendingRequests: space.pendingRequests });
     } catch (error) {
-        res.status(500).json({ error: "Error fetching pending requests" });
+        console.error("Error fetching dashboard data:", error);
+        res.status(500).json({ error: "Error fetching dashboard data" });
     }
 });
+
 
 
 router.post("/accept-request/:userId/:spaceId", async (req, res) => {

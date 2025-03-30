@@ -25,7 +25,7 @@
     <!-- MAIN BODY -->
     <div class="container mx-auto p-6">
 
-        <!-- PENDING REQUESTS -->
+ <!-- PENDING REQUESTS TABLE -->
 <div class="bg-white p-4 rounded-lg shadow-md mb-6">
     <h2 class="text-xl font-bold mb-4">Pending Join Requests</h2>
     <table class="w-full border-collapse border border-gray-300">
@@ -40,15 +40,14 @@
             <% if (pendingRequests.length > 0) { %>
                 <% pendingRequests.forEach(request => { %>
                     <tr>
-                        <td class="border p-2"><%= request.username %></td>
-                        <td class="border p-2"><%= request.email %></td>
+                        <td class="border p-2"><%= request.username || "No Name" %></td>
+                        <td class="border p-2"><%= request.email || "No Email" %></td>
                         <td class="border p-2">
                             <form action="/accept-request/<%= request._id %>/<%= space._id %>" method="POST" class="inline">
                                 <button type="submit" class="bg-green-500 text-white px-2 py-1 rounded">Accept</button>
                             </form>
-                            
                             <form action="/deny-request/<%= request._id %>/<%= space._id %>" method="POST" class="inline">
-                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Reject</button>
+                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Deny</button>
                             </form>
                         </td>
                     </tr>
@@ -69,23 +68,44 @@
             <canvas id="topPerformersChart"></canvas>
         </div>
 
-        <!-- AURA POINTS TABLE -->
-        <div class="bg-white p-4 rounded-lg shadow-md">
-            <h2 class="text-xl font-bold mb-4">Aura Points Leaderboard</h2>
-            <table class="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="border p-2">Rank</th>
-                        <th class="border p-2">Name</th>
-                        <th class="border p-2">Nickname</th>
-                        <th class="border p-2">Aura Points</th>
+<!-- AURA POINTS TABLE -->
+<div class="bg-white p-4 rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-4">Aura Points Leaderboard</h2>
+
+    <% if (space.members.length > 0) { %>
+        <table class="w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border p-2">Rank</th>
+                    <th class="border p-2">Name</th>
+                    <th class="border p-2">Nickname</th>
+                    <th class="border p-2">Aura Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (space.members.length > 0) { %>
+                    <% space.members.forEach((member, index) => { %>
+                        <tr>
+                            <td class="border p-2"><%= index + 1 %></td> <!-- Rank -->
+                            <td class="border p-2"><%= member.username || "No Name" %></td> <!-- Username Fix -->
+                            <td class="border p-2"><%= member.nickname || "N/A" %></td> <!-- Nickname -->
+                            <td class="border p-2"><%= member.auraPoints || 0 %></td> <!-- Aura Points -->
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4" class="border p-2 text-center">No members in space</td>
                     </tr>
-                </thead>
-                <tbody id="leaderboardTable">
-                    <!-- Data will be inserted dynamically -->
-                </tbody>
-            </table>
-        </div>
+                <% } %>
+            </tbody>
+            
+        </table>
+    <% } else { %>
+        <p class="text-gray-600 text-center">No members in this space</p>
+    <% } %>
+</div>
+
+
 
     </div>
 
