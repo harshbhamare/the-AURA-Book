@@ -3,27 +3,54 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const spaceModel = require("../models/space");
-
-const Space = require("../models/space");
-const User = require("../models/user");
+const User = require("../models/user");  // ✅ Fixed duplicate import
+const Space = require("../models/space")
 
 router.get("/spaces/:id/space-dashboard", async function (req, res) {
     try {
+        const token = req.cookies.token;
+        if (!token) return res.redirect("/register");
+
+        let decoded;
+        try {
+            decoded = jwt.verify(token, "bhamare");
+        } catch (err) {
+            return res.redirect("/register");
+        }
+
+        const currentUser = await User.findById(decoded.userId).populate("mySpaces");
+        if (!currentUser) return res.redirect("/register");
+
+        req.user = currentUser;
+
         const space = await spaceModel.findById(req.params.id)
             .populate("members", "username nickname auraPoints")
-            .populate("pendingRequests", "username email");
+            .populate("pendingRequests", "username email")
+            .populate("admin", "_id");
 
         if (!space) return res.status(404).json({ error: "Space not found" });
 
-        space.members.sort((a, b) => (b.auraPoints || 0) - (a.auraPoints || 0));
+        // Check if user is an admin of this space
+        const isAdminn = currentUser.mySpaces.some(space => space._id.toString() === req.params.id);
 
-        res.render("space-dashboard", { space, pendingRequests: space.pendingRequests });
+        space.pendingRequests = space.pendingRequests || [];
+        // space.members.sort((a, b) => (b.auraPoints || 0) - (a.auraPoints || 0));
+        const topPerformers = space.members
+            .sort((a, b) => (b.auraPoints || 0) - (a.auraPoints || 0))
+            .slice(0, 3);
+
+        res.render("space-dashboard", { 
+            space, 
+            pendingRequests: space.pendingRequests, 
+            user: currentUser,
+            isAdminn,
+            topPerformers
+        });
+
     } catch (error) {
-        console.error("Error fetching dashboard data:", error);
         res.status(500).json({ error: "Error fetching dashboard data" });
     }
 });
-
 
 
 router.post("/accept-request/:userId/:spaceId", async (req, res) => {

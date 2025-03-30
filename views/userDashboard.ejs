@@ -5,95 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f5f5f5;
-            font-family: Arial, sans-serif;
-            margin: 0;
-        }
-        
-        .menu {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: white;
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+      /* General Styles */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #0a48a8, #007bff);
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    color: white;
+}
 
-        .menu button {
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            transition: 0.3s ease-in-out;
-            background-color: #0a48a86e;
-        }
+/* Callout Section */
+.callout {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-        .menu button:hover {
-            background-color: #007bff;
-            color: white;
-        }
+.callout h1 {
+    font-size: 28px;
+    font-weight: bold;
+}
 
-        .hidden { display: none; }
+.callout p {
+    font-size: 18px;
+    opacity: 0.8;
+}
 
-        .input-form {
-            margin-top: 10px;
-            text-align: center;
-        }
+/* Menu Styles */
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: white;
+    padding: 25px 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: black;
+}
 
-        input {
-            padding: 8px;
-            width: 80%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+.menu button {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    background: #0a48a8;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
 
-        .action-btn {
-            margin-top: 10px;
-            padding: 8px 15px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.menu button:hover {
+    background: #0056b3;
+}
 
-        .add-btn { background-color: #28a745; }
-        .add-btn:hover { background-color: #218838; }
+/* Input Form */
+.input-form {
+    margin-top: 15px;
+    text-align: center;
+}
 
-        .join-btn { background-color: #ff9800; }
-        .join-btn:hover { background-color: #e68900; }
+.input-form input {
+    padding: 10px;
+    width: 90%;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
 
-        .mySpaces {
+.action-btn {
+    margin-top: 12px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    color: white;
+}
+
+.add-btn {
+    background-color: #28a745;
+}
+
+.add-btn:hover {
+    background-color: #218838;
+}
+
+.join-btn {
+    background-color: #ff9800;
+}
+
+.join-btn:hover {
+    background-color: #e68900;
+}
+
+/* Spaces Section */
+.mySpaces {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
     padding: 20px;
+    width: 100%;
+    max-width: 1000px;
 }
 
+/* Space Card */
 .space-card {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    padding: 25px;
+    width: 280px;
     text-align: center;
     position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .space-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .admin-badge {
@@ -104,42 +141,54 @@
     color: white;
     font-size: 10px;
     font-weight: bold;
-    padding: 5px 8px;
+    padding: 6px 10px;
     border-radius: 5px;
     text-transform: uppercase;
 }
 
 .space-name {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: #333;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .stats {
-    font-size: 12px;
+    font-size: 14px;
     color: #666;
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
+/* Button */
 .btn {
     display: inline-block;
-    margin-top: 12px;
-    padding: 10px 14px;
+    margin-top: 15px;
+    padding: 12px 18px;
     background: #007bff;
     color: white;
     text-decoration: none;
     border-radius: 6px;
     font-size: 14px;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease-in-out;
 }
 
 .btn:hover {
     background: #0056b3;
 }
+
+/* Hide Elements */
+.hidden {
+    display: none;
+}
+
     </style>
 </head>
 <body>
+    <div class="callout">
+        <h1>Hello, <%= user. nickname %></h1>
+        <p>Define your AURA </p>
+        <br>
+    </div>
     <div class="menu">
         <button onclick="toggleForm('spaceForm')">Create Your Space</button>
         <button onclick="toggleForm('joinForm')">Join a New Space</button>
@@ -154,7 +203,6 @@
             <button class="action-btn join-btn" onclick="submitForm('/join-space', 'spaceCode', 'joinForm')">Join</button>
         </div>
     </div>
-
     <div class="mySpaces">
         <% mySpaces.forEach(function(space) { %>
             <div class="space-card">
@@ -173,7 +221,7 @@
             <div class="space-card">
                 <div class="space-name"><%= space.spaceName %></div>
                 <div class="stats">👥 <%= space.members ? space.members.length : 0 %> Members</div>
-                <a href="/spaces/<%= space._id %>" class="btn">Go to Space</a>
+                <a href="/spaces/<%= space._id %>/space-dashboard" class="btn">Go to Space</a>
             </div>
         <% }); %>
     </div>
