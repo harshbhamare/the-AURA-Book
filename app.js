@@ -26,7 +26,7 @@ app.use("/", createSpaceRouter)
 app.use("/", joinSpaceRouter)
 app.use("/", spaceDashboardRouter)
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
